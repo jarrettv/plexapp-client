@@ -148,6 +148,7 @@ public class SerenitySurfaceViewVideoActivity extends Activity implements
 
 		if (preferPlexAspectRatio && this.aspectRatio != null) {
 			aspectRatio = Float.parseFloat(this.aspectRatio);
+			Log.i(TAG, "Using plex aspect ratio of " + this.aspectRatio);
 		}
 
 		if (ratioWidth > ratioHeight) {

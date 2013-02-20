@@ -202,7 +202,7 @@ public class MediaController extends FrameLayout {
 			if (mProgress instanceof SeekBar) {
 				SeekBar seeker = (SeekBar) mProgress;
 				seeker.setOnSeekBarChangeListener(mSeekListener);
-				seeker.setThumbOffset(1);
+				//seeker.setThumbOffset(1);
 			}
 			mProgress.setMax(1000);
 		}
@@ -215,9 +215,9 @@ public class MediaController extends FrameLayout {
 				.findViewById(R.id.mediacontroller_title);
 		textTitle.setText(title);
 
-		TextView summaryView = (TextView) v
-				.findViewById(R.id.mediacontroller_summary);
-		summaryView.setText(summary);
+//		TextView summaryView = (TextView) v
+//				.findViewById(R.id.mediacontroller_summary);
+//		summaryView.setText(summary);
 		
 		LinearLayout infoGraphic = (LinearLayout) v.findViewById(R.id.mediacontroller_infographic_layout);
 		ImageInfographicUtils iiu = new ImageInfographicUtils(75, 70);
