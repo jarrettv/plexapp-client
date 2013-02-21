@@ -47,6 +47,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 /**
  * A view that handles the internal video playback and representation of a movie
@@ -138,8 +139,6 @@ public class SerenitySurfaceViewVideoActivity extends Activity implements
 		float videoWidth = mediaPlayer.getVideoWidth();
 		float videoHeight = mediaPlayer.getVideoHeight();
 
-		float ratioWidth = surfaceViewWidth / videoWidth;
-		float ratioHeight = surfaceViewHeight / videoHeight;
 		float aspectRatio = videoWidth / videoHeight;
 
 		if (videoHeight == 480 && videoWidth == 720) {
@@ -148,24 +147,60 @@ public class SerenitySurfaceViewVideoActivity extends Activity implements
 
 		if (preferPlexAspectRatio && this.aspectRatio != null) {
 			aspectRatio = Float.parseFloat(this.aspectRatio);
+			Toast.makeText(getApplicationContext(), "Using plex aspect ratio of " + this.aspectRatio, Toast.LENGTH_SHORT).show();
 			Log.i(TAG, "Using plex aspect ratio of " + this.aspectRatio);
 		}
-
-		if (ratioWidth > ratioHeight) {
-			lp.width = (int) (surfaceViewHeight * aspectRatio);
+		
+		// if ratio is different, update video size
+		if (Math.round( (videoWidth / videoHeight * 10) ) != Math.round(aspectRatio * 10)) {
+			videoWidth = videoHeight * aspectRatio;
+			Log.d(TAG, "Actual video resolution with DAR ajustment is " + videoWidth + "x" + videoHeight);
+		}
+		
+		float sar = Math.round(((float)surfaceViewWidth / (float)surfaceViewHeight) * 100);
+		float dar = Math.round(aspectRatio * 100);
+		
+		if (sar < dar) {
+			// use screen width
+			lp.width = surfaceViewWidth;
+			lp.height = Math.round((float)surfaceViewWidth / aspectRatio);
+		} else if (sar > dar) {
+			// use screen height
+			lp.width = Math.round((float)surfaceViewHeight * aspectRatio);
 			lp.height = surfaceViewHeight;
 		} else {
 			lp.width = surfaceViewWidth;
-			lp.height = (int) (surfaceViewWidth / aspectRatio);
-		}
-
-		if (lp.width > surfaceViewWidth) {
-			lp.width = surfaceViewWidth;
-		}
-
-		if (lp.height > surfaceViewHeight) {
 			lp.height = surfaceViewHeight;
 		}
+
+//		if (videoWidth > surfaceViewWidth) {
+//			lp.width = surfaceViewWidth;
+//			lp.height = Math.round((videoWidth / (float)surfaceViewWidth) * videoHeight);
+//		} else if (videoHeight > surfaceViewHeight) {
+//			lp.height = surfaceViewHeight;
+//			lp.width = Math.round((videoHeight / (float)surfaceViewHeight) * videoWidth);			
+//		} else { // scale up
+//			// TODO:
+//			lp.width = (int)videoWidth;
+//			lp.height = (int)videoHeight;
+//		}
+		Log.d(TAG, "Output resolution is " + lp.width + "x" + lp.height);
+//		
+//		if (ratioWidth > ratioHeight) {
+//			lp.width = (int) (surfaceViewHeight * aspectRatio);
+//			lp.height = surfaceViewHeight;
+//		} else {
+//			lp.width = surfaceViewWidth;
+//			lp.height = (int) (surfaceViewWidth / aspectRatio);
+//		}
+//
+//		if (lp.width > surfaceViewWidth) {
+//			lp.width = surfaceViewWidth;
+//		}
+//
+//		if (lp.height > surfaceViewHeight) {
+//			lp.height = surfaceViewHeight;
+//		}
 
 		return lp;
 	}

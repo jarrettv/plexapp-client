@@ -76,7 +76,7 @@
         <activity android:name=".ui.preferences.SerenityPreferenceActivity"
             android:screenOrientation="landscape"></activity>
         
-        <service android:name=".core.services.MainMenuIntentService"/>
+        <service android:name="com.github.kingargyle.plexappclient.core.services.MainMenuIntentService"/>
         <service android:name=".core.services.MoviesRetrievalIntentService"/>
         <service android:name=".core.services.EpisodeRetrievalIntentService"/>
         <service android:name=".core.services.MovieCategoryRetrievalIntentService"/>

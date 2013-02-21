@@ -23,8 +23,6 @@
 
 package com.github.kingargyle.plexapp;
 
-import android.util.Log;
-
 import com.github.kingargyle.plexapp.config.IConfiguration;
 
 /**
