@@ -40,6 +40,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -478,10 +479,11 @@ public class SerenitySurfaceViewVideoActivity extends Activity implements
 			if (resumeOffset > 0) {
 				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 						context);
-
+				String resumeTime = DateUtils.formatElapsedTime(resumeOffset / DateUtils.SECOND_IN_MILLIS);
+				
 				alertDialogBuilder.setTitle("Resume Video");
 				alertDialogBuilder
-						.setMessage("Resume the video or start from beginning?")
+						.setMessage("Resume the video at " + resumeTime + " or start from beginning?")
 						.setCancelable(false)
 						.setPositiveButton("Resume",
 								new DialogInterface.OnClickListener() {

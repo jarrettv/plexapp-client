@@ -23,6 +23,7 @@ import android.graphics.Rect;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
+import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -110,10 +111,9 @@ public class MediaController extends FrameLayout {
 	private String audioChannels;
 
 	private AudioManager mAM;
-	
+
 	// Sets up a Executor service for handling image loading
 	private ExecutorService imageExecutorService;
-
 
 	public MediaController(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -123,7 +123,9 @@ public class MediaController extends FrameLayout {
 		imageExecutorService = Executors.newSingleThreadExecutor();
 	}
 
-	public MediaController(Context context, String summary, String title, String posterURL, String resolution, String videoFormat, String audioFormat, String audioChannels) {
+	public MediaController(Context context, String summary, String title,
+			String posterURL, String resolution, String videoFormat,
+			String audioFormat, String audioChannels) {
 		super(context);
 		imageExecutorService = Executors.newSingleThreadExecutor();
 		if (!mFromXml && initController(context)) {
@@ -202,7 +204,7 @@ public class MediaController extends FrameLayout {
 			if (mProgress instanceof SeekBar) {
 				SeekBar seeker = (SeekBar) mProgress;
 				seeker.setOnSeekBarChangeListener(mSeekListener);
-				//seeker.setThumbOffset(1);
+				// seeker.setThumbOffset(1);
 			}
 			mProgress.setMax(1000);
 		}
@@ -215,46 +217,50 @@ public class MediaController extends FrameLayout {
 				.findViewById(R.id.mediacontroller_title);
 		textTitle.setText(title);
 
-//		TextView summaryView = (TextView) v
-//				.findViewById(R.id.mediacontroller_summary);
-//		summaryView.setText(summary);
-		
-		LinearLayout infoGraphic = (LinearLayout) v.findViewById(R.id.mediacontroller_infographic_layout);
+		// TextView summaryView = (TextView) v
+		// .findViewById(R.id.mediacontroller_summary);
+		// summaryView.setText(summary);
+
+		LinearLayout infoGraphic = (LinearLayout) v
+				.findViewById(R.id.mediacontroller_infographic_layout);
 		ImageInfographicUtils iiu = new ImageInfographicUtils(75, 70);
 		if (resolution != null) {
-			ImageView rv = iiu.createVideoResolutionImage(resolution, v.getContext());
+			ImageView rv = iiu.createVideoResolutionImage(resolution,
+					v.getContext());
 			if (rv != null) {
 				infoGraphic.addView(rv);
 			}
 		}
-		
+
 		if (videoFormat != null) {
 			ImageView vr = iiu.createVideoCodec(videoFormat, v.getContext());
 			if (vr != null) {
 				infoGraphic.addView(vr);
 			}
 		}
-		
-		if (audioFormat != null) {
-			ImageView ar = iiu.createAudioCodecImage(audioFormat, v.getContext());
-			if (ar != null) {
-				infoGraphic.addView(ar);
-			}
-		}
-		
-		if (audioChannels != null) {
-			ImageView ar = iiu.createAudioChannlesImage(audioChannels, v.getContext());
-			if (ar != null) {
-				infoGraphic.addView(ar);
-			}
-		}
-		
-		
-		ImageView posterView = (ImageView) v.findViewById(R.id.mediacontroller_poster_art);
-		posterView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-		imageExecutorService.execute(new OSDImageLoader(posterURL, posterView, R.drawable.default_video_cover));
 
-		
+		if (audioFormat != null) {
+			ImageView ar = iiu.createAudioCodecImage(audioFormat,
+					v.getContext());
+			if (ar != null) {
+				infoGraphic.addView(ar);
+			}
+		}
+
+		if (audioChannels != null) {
+			ImageView ar = iiu.createAudioChannlesImage(audioChannels,
+					v.getContext());
+			if (ar != null) {
+				infoGraphic.addView(ar);
+			}
+		}
+
+		ImageView posterView = (ImageView) v
+				.findViewById(R.id.mediacontroller_poster_art);
+		posterView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+		imageExecutorService.execute(new OSDImageLoader(posterURL, posterView,
+				R.drawable.default_video_cover));
+
 	}
 
 	public void setMediaPlayer(MediaPlayerControl player) {
@@ -453,34 +459,16 @@ public class MediaController extends FrameLayout {
 		mDuration = duration;
 
 		if (mEndTime != null) {
-			mEndTime.setText(formatDuration(mDuration));
+			mEndTime.setText(DateUtils.formatElapsedTime(duration
+					/ DateUtils.SECOND_IN_MILLIS));
 		}
 
 		if (mCurrentTime != null) {
-			mCurrentTime.setText(formatDuration(position));
+			mCurrentTime.setText(DateUtils.formatElapsedTime(position
+					/ DateUtils.SECOND_IN_MILLIS));
 		}
 
 		return position;
-	}
-
-	
-	/**
-	 * Return a formated duration in hh:mm:ss format.
-	 * @param duration number of milliseconds that have passed.
-	 * @return formatted string
-	 */
-	protected String formatDuration(long duration) {
-		long tempdur = duration;
-		long hours = TimeUnit.MILLISECONDS.toHours(duration);
-		
-        tempdur = tempdur - (hours * MILLISECONDS_PER_HOUR);
-        
-        long minutes = tempdur / MILLISECONDS_PER_MINUTE;
-        tempdur = tempdur - (minutes * MILLISECONDS_PER_MINUTE);
-        
-        long seconds = tempdur / 1000;
-        
-		return String.format("%02d:%02d:%02d", hours, minutes, seconds);
 	}
 
 	@Override
@@ -626,8 +614,10 @@ public class MediaController extends FrameLayout {
 			mDragging = true;
 			show(3600000);
 			mHandler.removeMessages(SHOW_PROGRESS);
-			if (mInstantSeeking)
-				mAM.setStreamMute(AudioManager.STREAM_MUSIC, true);
+
+			// this causes volume issues on LG
+			// if (mInstantSeeking)
+			// mAM.setStreamMute(AudioManager.STREAM_MUSIC, true);
 			// if (mInfoView != null) {
 			// mInfoView.setText("");
 			// mInfoView.setVisibility(View.VISIBLE);
@@ -647,7 +637,7 @@ public class MediaController extends FrameLayout {
 			// if (mInfoView != null)
 			// mInfoView.setText(time);
 			if (mCurrentTime != null)
-				mCurrentTime.setText(time);
+				mCurrentTime.setText(DateUtils.formatElapsedTime(newposition / DateUtils.SECOND_IN_MILLIS));
 		}
 
 		public void onStopTrackingTouch(SeekBar bar) {
@@ -659,7 +649,7 @@ public class MediaController extends FrameLayout {
 			// }
 			show(sDefaultTimeout);
 			mHandler.removeMessages(SHOW_PROGRESS);
-			mAM.setStreamMute(AudioManager.STREAM_MUSIC, false);
+			//mAM.setStreamMute(AudioManager.STREAM_MUSIC, false);
 			mDragging = false;
 			mHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 1000);
 		}

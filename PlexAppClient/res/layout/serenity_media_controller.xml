@@ -41,6 +41,7 @@
 	        android:layout_gravity="top"
 	        android:maxWidth="500dp"
 	        android:paddingBottom="15dp"
+	        android:paddingLeft="18dp"
 	        android:paddingTop="15dp"
 	        android:text="Title of Video"
 	        android:textColor="@color/light_font"
@@ -72,6 +73,8 @@
        	        android:layout_gravity="left|center_vertical"
        	        android:layout_marginLeft="10dp"
        	        android:layout_marginRight="10dp"
+       	        android:gravity="right"
+       	        android:minWidth="70dp"
        	        android:text="00:00:00"
        	        android:textColor="#F0F0F0"
        	        android:textSize="15sp" />
