@@ -42,6 +42,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -148,7 +149,9 @@ public class SerenitySurfaceViewVideoActivity extends Activity implements
 
 		if (preferPlexAspectRatio && this.aspectRatio != null) {
 			aspectRatio = Float.parseFloat(this.aspectRatio);
-			Toast.makeText(getApplicationContext(), "Using plex aspect ratio of " + this.aspectRatio, Toast.LENGTH_SHORT).show();
+			Toast toast = Toast.makeText(getApplicationContext(), "Using plex aspect ratio of " + this.aspectRatio, Toast.LENGTH_SHORT);
+			toast.setGravity(Gravity.TOP, 0, 0);
+			toast.show();
 			Log.i(TAG, "Using plex aspect ratio of " + this.aspectRatio);
 		}
 		
@@ -248,6 +251,7 @@ public class SerenitySurfaceViewVideoActivity extends Activity implements
 
 		mediaPlayer = new MediaPlayer();
 		mediaPlayer.setOnErrorListener(new SerenityOnErrorListener());
+		
 		surfaceView = (SurfaceView) findViewById(R.id.surfaceView);
 		surfaceView.setKeepScreenOn(true);
 		SurfaceHolder holder = surfaceView.getHolder();

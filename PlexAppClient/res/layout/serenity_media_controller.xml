@@ -36,7 +36,7 @@
 	    <TextView
 	        android:id="@+id/mediacontroller_title"
 	        style="@style/TitleStyle"
-	        android:layout_width="438dp"
+	        android:layout_width="383dp"
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="top"
 	        android:maxWidth="500dp"
@@ -112,54 +112,42 @@
         android:gravity="center_horizontal"
         android:orientation="horizontal" >
 
-        <ImageButton
+        <Button
             android:id="@+id/osd_rewind_control"
+            style="@style/ButtonDingStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
             android:focusable="true"
-            android:nextFocusRight="@id/mediacontroller_play_pause"
-            android:nextFocusUp="@id/mediacontroller_seekbar"
-            android:scaleType="fitXY"
-            android:src="@drawable/osd_rewind_nf" />
+            android:text=""
+            android:typeface="monospace" />
 
-        <ImageButton
+        <Button
             android:id="@+id/mediacontroller_play_pause"
+            style="@style/ButtonDingStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:focusable="true"
-            android:nextFocusLeft="@id/osd_rewind_control"
-            android:nextFocusRight="@+id/osd_stop_control"
-            android:nextFocusUp="@id/mediacontroller_seekbar"
-            android:scaleType="fitXY"
-            android:src="@drawable/osd_play_nf" >
+            android:text=""
+            android:typeface="monospace"
+            android:focusable="true"/>
 
-            <requestFocus />
-        </ImageButton>
-
-        <ImageButton
+        <Button
             android:id="@+id/osd_stop_control"
+            style="@style/ButtonDingStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:focusable="true"
-            android:nextFocusLeft="@id/mediacontroller_play_pause"
-            android:nextFocusRight="@+id/osd_ff_control"
-            android:nextFocusUp="@id/mediacontroller_seekbar"
-            android:scaleType="fitXY"
-            android:src="@drawable/osd_stop_nf" />
+            android:text=""
+            android:typeface="monospace"
+            android:focusable="true" />
 
-        <ImageButton
+        <Button
             android:id="@+id/osd_ff_control"
+            style="@style/ButtonDingStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:focusable="true"
-            android:nextFocusLeft="@id/osd_stop_control"
-            android:nextFocusUp="@id/mediacontroller_seekbar"
-            android:scaleType="fitXY"
-            android:src="@drawable/osd_forward_nf" />
+            android:text=""
+            android:typeface="monospace"
+            android:focusable="true" />
+
    	</LinearLayout>
 	        
    </LinearLayout>

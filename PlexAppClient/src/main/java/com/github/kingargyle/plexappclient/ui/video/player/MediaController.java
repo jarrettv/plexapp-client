@@ -18,8 +18,15 @@ import com.github.kingargyle.plexappclient.R;
 import com.github.kingargyle.plexappclient.core.imageloader.OSDImageLoader;
 import com.github.kingargyle.plexappclient.ui.util.ImageInfographicUtils;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
@@ -32,6 +39,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Gallery;
 import android.widget.ImageButton;
@@ -74,15 +85,9 @@ import android.widget.TextView;
  * created in an xml layout.
  */
 public class MediaController extends FrameLayout {
-	/**
-	 * 
-	 */
-	private static final int MILLISECONDS_PER_MINUTE = 60000;
-	/**
-	 * 
-	 */
-	private static final int MILLISECONDS_PER_HOUR = 3600000;
+	static String TAG = "MediaController";
 	private MediaPlayerControl mPlayer;
+	
 	private Context mContext;
 	private PopupWindow mWindow;
 	private int mAnimStyle;
@@ -101,7 +106,7 @@ public class MediaController extends FrameLayout {
 	private static final int FADE_OUT = 1;
 	private static final int SHOW_PROGRESS = 2;
 	private boolean mFromXml = false;
-	private ImageButton mPauseButton;
+	private Button mPauseButton;
 	private String summary;
 	private String title;
 	private String posterURL;
@@ -109,7 +114,10 @@ public class MediaController extends FrameLayout {
 	private String videoFormat;
 	private String audioFormat;
 	private String audioChannels;
+	private Animator animFade;
 
+	private static Typeface fontdings;
+	
 	private AudioManager mAM;
 
 	// Sets up a Executor service for handling image loading
@@ -138,6 +146,8 @@ public class MediaController extends FrameLayout {
 		this.audioChannels = audioChannels;
 		this.videoFormat = videoFormat;
 		this.audioFormat = audioFormat;
+
+		fontdings = Typeface.createFromAsset(context.getAssets(), "fonts/fontawesome-webfont.ttf");
 	}
 
 	private boolean initController(Context context) {
@@ -154,10 +164,10 @@ public class MediaController extends FrameLayout {
 
 	private void initFloatingWindow() {
 		mWindow = new PopupWindow(mContext);
-		mWindow.setFocusable(false);
+		mWindow.setFocusable(true);
 		mWindow.setBackgroundDrawable(null);
 		mWindow.setOutsideTouchable(true);
-		mAnimStyle = android.R.style.Animation;
+		mAnimStyle = android.R.style.Animation_Translucent;
 	}
 
 	/**
@@ -192,8 +202,17 @@ public class MediaController extends FrameLayout {
 	}
 
 	private void initControllerView(View v) {
-		mPauseButton = (ImageButton) v
-				.findViewById(R.id.mediacontroller_play_pause);
+		animFade = (Animator) AnimatorInflater.loadAnimator(v.getContext(),
+			    R.animator.animator_flash);
+		int[] buttons = new int[] { R.id.osd_rewind_control, R.id.mediacontroller_play_pause,
+				R.id.osd_stop_control, R.id.osd_ff_control };
+		for (int id : buttons) {
+			Button b = (Button)this.findViewById(id);
+			b.setTypeface(fontdings);
+			osdY = b.getY();
+		}
+		
+		mPauseButton = (Button) v.findViewById(R.id.mediacontroller_play_pause);
 		if (mPauseButton != null) {
 			mPauseButton.requestFocus();
 			mPauseButton.setOnClickListener(mPauseListener);
@@ -584,8 +603,53 @@ public class MediaController extends FrameLayout {
 		return super.onKeyDown(keyCode, event);
 	}
 
+	private Animator ani;
+	private float osdY;
+	
 	private View.OnClickListener mPauseListener = new View.OnClickListener() {
 		public void onClick(View v) {
+			final Button b = (Button)v;
+			if (ani != null && ani.isRunning()) ani.cancel();
+			b.setY(osdY);
+			
+//			Animation ani = b.getAnimation();
+//			Log.d(TAG, ani == null ? "No animation" : "Animation!");
+//			if (ani != null) ani.cancel();
+			AnimatorListenerAdapter   al = new AnimatorListenerAdapter () {
+				@Override
+				public void onAnimationStart(Animator animator) {
+					ani = animator;
+				}
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					//if (mPauseButton.getAlpha() == 0.5F)
+						b.animate().setDuration(200).yBy(-5).alpha(1F)
+							.setListener(null);
+				};
+			};
+			b.animate().setDuration(60).yBy(5).alpha(0.5F)
+				.setListener(al);
+			
+//			ObjectAnimator set = (ObjectAnimator) AnimatorInflater.loadAnimator(v.getContext(),
+//				    R.animator.animator_flash);
+//				set.setTarget(v);
+//				set.start();
+//				ObjectAnimator anim = ObjectAnimator.ofInt(v, "textColor", values)
+//				Integer colorFrom = getResources().getColor(R.color.custom_normal);
+//				Integer colorTo = getResources().getColor(R.color.custom_activated);
+//				ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+//				colorAnimation.addUpdateListener(new AnimatorUpdateListener() {
+//
+//				    @Override
+//				    public void onAnimationUpdate(ValueAnimator animator) {
+//				        textView.setBackgroundColor((Integer)animator.getAnimatedValue());
+//				    }
+//
+//				});
+//				colorAnimation.start();
+			//animFade.setTarget(v);
+			//animFade.start();
+				
 			doPauseResume();
 			show(sDefaultTimeout);
 		}
@@ -596,9 +660,9 @@ public class MediaController extends FrameLayout {
 			return;
 
 		if (mPlayer.isPlaying())
-			mPauseButton.setImageResource(R.drawable.osd_pause_nf);
+			mPauseButton.setText("");
 		else
-			mPauseButton.setImageResource(R.drawable.osd_play_nf);
+			mPauseButton.setText("");
 	}
 
 	private void doPauseResume() {

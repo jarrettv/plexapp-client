@@ -7,13 +7,5 @@
     <style name="AppBaseTheme" parent="android:Theme.Holo">
         <!-- API 11 theme customizations can go here. -->
     </style>
-    <style name="TitleStyle">
-    <item name="android:textColor">#ffffffff</item>
-    <item name="android:textSize">22sp</item>
-    <item name="android:shadowColor">#000000</item>
-    <item name="android:shadowDx">3</item>
-    <item name="android:shadowDy">3</item>
-    <item name="android:shadowRadius">8</item>
-  </style>
 
 </resources>
